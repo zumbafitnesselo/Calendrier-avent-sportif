@@ -1,6 +1,6 @@
 const $ = s => document.querySelector(s);
 let active = 'renfo', activeDay = 1;
-const order = [7,2,19,11,4,23,1,15,9,21,5,17,13,25,6,20,3,16,10,24,8,14,22,12,18];
+const order = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 const key = c => 'avent-progress-' + c;
 function done(c) { try { return JSON.parse(localStorage.getItem(key(c)) || '[]'); } catch { return []; } }
 function show(id) { ['home','calendar','detail'].forEach(x => $('#'+x).classList.toggle('hidden', x !== id)); }
