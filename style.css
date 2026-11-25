@@ -2,4 +2,4 @@
 .coach-avatar{width:min(280px,72vw);margin:18px auto 0;display:flex;justify-content:center}
 .coach-avatar img{display:block;width:100%;height:auto;max-height:300px;object-fit:contain;filter:drop-shadow(0 8px 16px #0008);border-radius:18px}
 
-.coach-avatar{width:min(330px,82vw);margin:18px auto 4px;display:flex;justify-content:center}.coach-avatar img{display:block;width:100%;height:auto;max-height:260px;object-fit:cover;object-position:center 18%;border:2px solid #e8c36a;border-radius:18px;box-shadow:0 8px 20px #0009}
+.day{position:relative}.day-number{display:block}.day-lock{display:block;font-size:.72rem;line-height:1;margin-top:3px}.day.locked{color:#f2e7c2}
