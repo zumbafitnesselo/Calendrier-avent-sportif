@@ -126,7 +126,7 @@ window.CALENDAR_DATA = {
       "explanation": "Un dernier défi avant Noël !\n\nJe voulais vous féliciter pour votre motivation, votre énergie et votre engagement tout au long de ces 25 défis. Vous pouvez être fiers de vous !\n\nJe suis très fière de vous accompagner, de vous voir progresser et de partager tous ces moments sportifs avec vous. Merci pour votre bonne humeur et votre fidélité.\n\nJe vous souhaite à toutes et à tous un merveilleux Noël, rempli de bonheur et de beaux moments avec vos proches. Profitez bien des fêtes !\n\nElodie",
       "image": "defi-noel-squat.png",
   
-"music": "https://www.youtube.com/watch?v=sQDTJLyZLT4"
+"music": "https://www.youtube.com/watch?v=aAkMkVFwAoo"
 } 
   ],
   "tabata": [
