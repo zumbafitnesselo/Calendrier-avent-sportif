@@ -127,7 +127,7 @@ window.CALENDAR_DATA = {
       "image": "defi-noel-squat.png",
   
 "music": "https://www.youtube.com/watch?v=sQDTJLyZLT4"
-} }
+} 
   ],
   "tabata": [
     {
