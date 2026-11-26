@@ -1,18 +1,13 @@
 const $ = s => document.querySelector(s);
 let active = 'renfo', activeDay = 1;
-const order = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+const order = Array.from({length:25}, (_, i) => i + 1);
 const key = c => 'avent-progress-' + c;
 function done(c) { try { return JSON.parse(localStorage.getItem(key(c)) || '[]'); } catch { return []; } }
 function show(id) { ['home','calendar','detail'].forEach(x => $('#'+x).classList.toggle('hidden', x !== id)); }
-function addLink(parent, url, label) {
-  if (!url) return;
-  const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  a.textContent = label;
-  a.className = 'video-link';
-  parent.appendChild(a);
+function makeLink(label, url) {
+  if (!url) return null;
+  const a = document.createElement('a'); a.href = url; a.target = '_blank';
+  a.rel = 'noopener noreferrer'; a.textContent = label; a.className = 'video-link'; return a;
 }
 function render(c) {
   active = c;
@@ -27,59 +22,27 @@ function render(c) {
     const isDone = completed.includes(n), locked = i >= unlockedCount && !isDone;
     b.className = 'day' + (isDone ? ' done' : '') + (locked ? ' locked' : '');
     b.innerHTML = '<span class="day-number">' + n + '</span>' + (locked ? '<span class="day-lock">🔒</span>' : '');
-    b.disabled = locked;
-    b.setAttribute('aria-label', 'Case ' + n + (locked ? ', verrouillée' : isDone ? ', terminée' : ', à découvrir'));
-    b.onclick = () => openDay(n);
-    $('#days').appendChild(b);
+    b.disabled = locked; b.setAttribute('aria-label', 'Case ' + n + (locked ? ', verrouillée' : isDone ? ', terminée' : ', à découvrir'));
+    b.onclick = () => openDay(n); $('#days').appendChild(b);
   });
   show('calendar');
 }
 function openDay(n) {
-  activeDay = n;
-  const x = CALENDAR_DATA[active][n-1];
+  activeDay = n; const x = CALENDAR_DATA[active][n-1];
   $('#day-title').textContent = 'Case ' + n + ' – ' + x.title;
   $('#day-details').textContent = x.details || '';
+  const oldPhoto = $('#day-photo'); if (oldPhoto) oldPhoto.remove();
+  if (x.image) { const img = document.createElement('img'); img.id='day-photo'; img.src=x.image; img.alt='Illustration de coach devant le sapin de Noël'; img.className='day-photo'; $('#day-details').insertAdjacentElement('afterend',img); }
   $('#day-rounds').textContent = x.rounds || '';
-  const old = $('#exercise-help');
-  if (old) old.remove();
-  const box = document.createElement('div');
-  box.id = 'exercise-help';
-  box.className = 'exercise-help';
-  if (x.explanation) {
-    const p = document.createElement('p');
-    p.textContent = x.explanation;
-    box.appendChild(p);
-  }
-  if (Array.isArray(x.exercises) && x.exercises.length) {
-    const heading = document.createElement('p');
-    heading.textContent = 'Exercices :';
-    box.appendChild(heading);
-    const list = document.createElement('ul');
-    x.exercises.forEach(ex => {
-      const li = document.createElement('li');
-      if (ex.url) addLink(li, ex.url, ex.name);
-      else li.textContent = ex.name;
-      list.appendChild(li);
-    });
-    box.appendChild(list);
-  }
-  if (x.video) addLink(box, x.video, '▶ Voir la vidéo de démonstration');
-  if (x.music) addLink(box, x.music, '♫ Écouter la musique');
-  if (box.childNodes.length) $('#day-rounds').insertAdjacentElement('afterend', box);
-  const finished = done(active).includes(n);
-  $('#complete').disabled = finished;
-  $('#complete').textContent = finished ? 'Défi déjà réalisé ✓' : 'Défi réalisé ! ✓';
-  show('detail');
+  const old = $('#exercise-help'); if (old) old.remove();
+  const box = document.createElement('div'); box.id='exercise-help'; box.className='exercise-help';
+  if (x.explanation) { const p=document.createElement('p'); p.className='coach-message'; p.textContent=x.explanation; box.appendChild(p); }
+  if (x.video) box.appendChild(makeLink('▶ Voir la vidéo de démonstration',x.video));
+  if (x.music) { const p=document.createElement('p'); p.className='link-heading'; p.textContent='Musique'; box.appendChild(p); box.appendChild(makeLink('♫ Écouter la musique',x.music)); }
+  if (x.exercises && x.exercises.length) { const h=document.createElement('p'); h.className='link-heading'; h.textContent='Vidéos des exercices'; box.appendChild(h); const ul=document.createElement('ul'); ul.className='exercise-links'; x.exercises.forEach(e=>{const li=document.createElement('li'); li.appendChild(makeLink('▶ '+e.name,e.url)); ul.appendChild(li);}); box.appendChild(ul); }
+  if (box.children.length) $('#day-rounds').insertAdjacentElement('afterend',box);
+  const finished=done(active).includes(n); $('#complete').disabled=finished; $('#complete').textContent=finished?'Défi déjà réalisé ✓':'Défi réalisé ! ✓'; show('detail');
 }
-document.querySelectorAll('[data-calendar]').forEach(b => b.onclick = () => render(b.dataset.calendar));
-$('#back').onclick = () => show('home');
-$('#detail-back').onclick = () => render(active);
-$('#complete').onclick = () => {
-  const a = done(active);
-  if (!a.includes(activeDay)) {
-    a.push(activeDay);
-    a.sort((x,y) => x-y);
-    localStorage.setItem(key(active), JSON.stringify(a));
-  }
-  render(active);
-};
+document.querySelectorAll('[data-calendar]').forEach(b=>b.onclick=()=>render(b.dataset.calendar));
+$('#back').onclick=()=>show('home'); $('#detail-back').onclick=()=>render(active);
+$('#complete').onclick=()=>{const a=done(active); if(!a.includes(activeDay)){a.push(activeDay);a.sort((x,y)=>x-y);localStorage.setItem(key(active),JSON.stringify(a));} render(active);};
