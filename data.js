@@ -123,11 +123,9 @@ window.CALENDAR_DATA = {
     {
       "title": "Défi photo de Noël",
       "details": "Prends une photo de toi en position squat devant ton sapin de Noël et envoie-la-moi en message privé !",
-      "explanation": "Un dernier défi avant Noël !\n\nPrends une photo de toi en position squat devant ton sapin de Noël et envoie-la-moi en message privé !\n\nEt voilà, nous arrivons au bout de notre calendrier de l'Avent sportif !\n\nJe voulais vous féliciter pour votre motivation, votre énergie tout au long de ces 25 défis. Vous pouvez être fiers de vous !\n\nJe suis vraiment fière de vous accompagner, de vous voir progresser et de partager tous ces moments sportifs avec vous.\n\nMerci pour votre bonne humeur et votre fidélité.\n\nJe vous souhaite à toutes et à tous un merveilleux Noël, rempli de bonheur, de joie et de beaux moments avec vos proches.\n\nProfitez bien des fêtes… et n'oubliez pas de garder un peu d'énergie pour la reprise !\n\nElodie",
-      "image": "defi-noel-squat.png",
-  
-"music": "https://www.youtube.com/watch?v=aAkMkVFwAoo"
-} 
+      "explanation": "Un dernier défi avant Noël !\n\nJe voulais vous féliciter pour votre motivation, votre énergie et votre engagement tout au long de ces 25 défis. Vous pouvez être fiers de vous !\n\nJe suis très fière de vous accompagner, de vous voir progresser et de partager tous ces moments sportifs avec vous. Merci pour votre bonne humeur et votre fidélité.\n\nJe vous souhaite à toutes et à tous un merveilleux Noël, rempli de bonheur et de beaux moments avec vos proches. Profitez bien des fêtes !\n\nElodie",
+      "image": "defi-noel-squat.png"
+    }
   ],
   "tabata": [
     {
@@ -712,7 +710,7 @@ window.CALENDAR_DATA = {
       "music": "https://www.youtube.com/watch?v=aAkMkVFwAoo",
       "rounds": "",
       "exercises": [],
-    "explanation": "Un dernier défi avant Noël !\n\nJe voulais vous féliciter pour votre motivation, votre énergie et votre engagement tout au long de ces 25 défis. Vous pouvez être fiers de vous !\n\nJe suis vraiment fière de vous accompagner, de vous voir progresser et de partager tous ces moments sportifs avec vous.\n\nMerci pour votre bonne humeur et votre fidélité.\n\nJe vous souhaite à toutes et à tous un merveilleux Noël, rempli de bonheur, de joie et de beaux moments avec vos proches.\n\nProfitez bien des fêtes… et n'oubliez pas de garder un peu d'énergie pour la reprise !\n\nElodie",
+      "explanation": "Un dernier défi avant Noël !\n\nJe voulais vous féliciter pour votre motivation, votre énergie et votre engagement tout au long de ces 25 défis. Vous pouvez être fiers de vous !\n\nJe suis très fière de vous accompagner, de vous voir progresser et de partager tous ces moments sportifs avec vous. Merci pour votre bonne humeur et votre fidélité.\n\nJe vous souhaite à toutes et à tous un merveilleux Noël, rempli de bonheur et de beaux moments avec vos proches. Profitez bien des fêtes !\n\nElodie",
       "image": "defi-noel-squat.png"
     }
   ]
