@@ -1,4 +1,4 @@
-const $ = s => document.querySelector(s);
+(() => {const $ = s => document.querySelector(s);
 let active = 'renfo', activeDay = 1, mode = 'login', supabase = null, currentUser = null;
 let progress = { renfo: [], tabata: [] };
 const order = Array.from({length:25}, (_, i) => i + 1);
