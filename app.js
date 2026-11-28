@@ -51,58 +51,5 @@ $('#forgot-password').onclick=async()=>{if(!supabase)return;const email=$('#auth
 $('#logout').onclick=async()=>{await supabase.auth.signOut();currentUser=null;progress={renfo:[],tabata:[]};setMode('login');show('auth');};
 document.querySelectorAll('[data-calendar]').forEach(b=>b.onclick=()=>render(b.dataset.calendar));$('#back').onclick=()=>show('home');$('#detail-back').onclick=()=>render(active);
 $('#complete').onclick=async()=>{if(done(active).includes(activeDay))return;$('#complete').disabled=true;progress[active]=[...done(active),activeDay].sort((a,b)=>a-b);try{await saveProgress(active);render(active);}catch(e){progress[active]=progress[active].filter(n=>n!==activeDay);$('#complete').disabled=false;alert('La sauvegarde a échoué : '+e.message);}};
-(async()=>{if(!configured()){show('auth');message('Configuration Supabase manquante : ajoute l’URL du projet et la clé Publishable dans config.js.',true);return;}if(!window.supabase?.createClient){message('Le service de connexion ne s’est pas chargé. Vérifie ta connexion internet.',true);return;}supabase=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session}}=await supabase.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'PASSWORD_RECOVERY') {
-    currentUser = session.user;
-
-    let panel = document.getElementById('password-recovery');
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.id = 'password-recovery';
-      panel.innerHTML = `
-        <h2>Nouveau mot de passe</h2>
-        <p>Choisis ton nouveau mot de passe pour accéder au calendrier.</p>
-        <form id="new-password-form">
-          <input id="new-password" type="password" placeholder="Nouveau mot de passe" required minlength="6">
-          <input id="confirm-password" type="password" placeholder="Confirmer le mot de passe" required minlength="6">
-          <button type="submit">Enregistrer mon mot de passe</button>
-          <p id="password-message"></p>
-        </form>`;
-      panel.style.cssText = 'position:fixed;inset:0;z-index:9999;background:white;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;text-align:center;';
-      document.body.appendChild(panel);
-
-      document.getElementById('new-password-form').onsubmit = async e => {
-        e.preventDefault();
-        const password = document.getElementById('new-password').value;
-        const confirmation = document.getElementById('confirm-password').value;
-        const msg = document.getElementById('password-message');
-
-        if (password !== confirmation) {
-          msg.textContent = 'Les deux mots de passe ne correspondent pas.';
-          return;
-        }
-
-        const { error } = await supabase.auth.updateUser({ password });
-
-        if (error) {
-          msg.textContent = 'Erreur : ' + error.message;
-          return;
-        }
-
-        msg.textContent = 'Mot de passe modifié ! Tu peux maintenant te connecter.';
-        await supabase.auth.signOut();
-        currentUser = null;
-        setMode('login');
-        show('auth');
-        panel.remove();
-      };
-    }
-
-    show('auth');
-    panel.style.display = 'flex';
-    return;
-  }
-
-  if (session && !currentUser) enterApp(session.user);
-});
+(async()=>{if(!configured()){show('auth');message('Configuration Supabase manquante : ajoute l’URL du projet et la clé Publishable dans config.js.',true);return;}if(!window.supabase?.createClient){message('Le service de connexion ne s’est pas chargé. Vérifie ta connexion internet.',true);return;}supabase=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session}}=await supabase.auth.getSession();if(session)await enterApp(session.user);else show('auth');supabase.auth.onAuthStateChange((_event,session)=>{if(session&&!currentUser)enterApp(session.user);});})();
         })();
