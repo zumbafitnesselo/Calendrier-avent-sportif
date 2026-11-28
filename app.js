@@ -51,5 +51,27 @@ $('#forgot-password').onclick=async()=>{if(!supabase)return;const email=$('#auth
 $('#logout').onclick=async()=>{await supabase.auth.signOut();currentUser=null;progress={renfo:[],tabata:[]};setMode('login');show('auth');};
 document.querySelectorAll('[data-calendar]').forEach(b=>b.onclick=()=>render(b.dataset.calendar));$('#back').onclick=()=>show('home');$('#detail-back').onclick=()=>render(active);
 $('#complete').onclick=async()=>{if(done(active).includes(activeDay))return;$('#complete').disabled=true;progress[active]=[...done(active),activeDay].sort((a,b)=>a-b);try{await saveProgress(active);render(active);}catch(e){progress[active]=progress[active].filter(n=>n!==activeDay);$('#complete').disabled=false;alert('La sauvegarde a échoué : '+e.message);}};
-(async()=>{if(!configured()){show('auth');message('Configuration Supabase manquante : ajoute l’URL du projet et la clé Publishable dans config.js.',true);return;}if(!window.supabase?.createClient){message('Le service de connexion ne s’est pas chargé. Vérifie ta connexion internet.',true);return;}supabase=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session}}=await supabase.auth.getSession();if(session)await enterApp(session.user);else show('auth');supabase.auth.onAuthStateChange((_event,session)=>{if(session&&!currentUser)enterApp(session.user);});})();
+(async()=>{if(!configured()){show('auth');message('Configuration Supabase manquante : ajoute l’URL du projet et la clé Publishable dans config.js.',true);return;}if(!window.supabase?.createClient){message('Le service de connexion ne s’est pas chargé. Vérifie ta connexion internet.',true);return;}supabase=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session}}=await supabase.auth.getSession();if(session)await enterApp(session.user);else show('auth');supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    currentUser = session.user;
+    const password = prompt('Choisis ton nouveau mot de passe (6 caractères minimum) :');
+    if (!password || password.length < 6) {
+      alert('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+    supabase.auth.updateUser({ password }).then(({ error }) => {
+      if (error) {
+        alert('Erreur : ' + error.message);
+      } else {
+        alert('Mot de passe modifié !');
+        supabase.auth.signOut();
+        currentUser = null;
+        setMode('login');
+        show('auth');
+      }
+    });
+    return;
+  }
+  if (session && !currentUser) enterApp(session.user);
+});
         })();
