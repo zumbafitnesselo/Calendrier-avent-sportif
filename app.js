@@ -51,27 +51,100 @@ $('#forgot-password').onclick=async()=>{if(!supabase)return;const email=$('#auth
 $('#logout').onclick=async()=>{await supabase.auth.signOut();currentUser=null;progress={renfo:[],tabata:[]};setMode('login');show('auth');};
 document.querySelectorAll('[data-calendar]').forEach(b=>b.onclick=()=>render(b.dataset.calendar));$('#back').onclick=()=>show('home');$('#detail-back').onclick=()=>render(active);
 $('#complete').onclick=async()=>{if(done(active).includes(activeDay))return;$('#complete').disabled=true;progress[active]=[...done(active),activeDay].sort((a,b)=>a-b);try{await saveProgress(active);render(active);}catch(e){progress[active]=progress[active].filter(n=>n!==activeDay);$('#complete').disabled=false;alert('La sauvegarde a échoué : '+e.message);}};
-(async()=>{if(!configured()){show('auth');message('Configuration Supabase manquante : ajoute l’URL du projet et la clé Publishable dans config.js.',true);return;}if(!window.supabase?.createClient){message('Le service de connexion ne s’est pas chargé. Vérifie ta connexion internet.',true);return;}supabase=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session}}=await supabase.auth.getSession();if(session)await enterApp(session.user);else show('auth');supabase.auth.onAuthStateChange((event, session) => {
-  if (event === 'PASSWORD_RECOVERY') {
-    currentUser = session.user;
-    const password = prompt('Choisis ton nouveau mot de passe (6 caractères minimum) :');
-    if (!password || password.length < 6) {
-      alert('Le mot de passe doit contenir au moins 6 caractères.');
-      return;
-    }
-    supabase.auth.updateUser({ password }).then(({ error }) => {
-      if (error) {
-        alert('Erreur : ' + error.message);
-      } else {
-        alert('Mot de passe modifié !');
-        supabase.auth.signOut();
-        currentUser = null;
-        setMode('login');
-        show('auth');
-      }
-    });
+(async()=>{
+  if(!configured()){
+    show('auth');
+    message('Configuration Supabase manquante : ajoute l’URL du projet et la clé Publishable dans config.js.',true);
     return;
   }
-  if (session && !currentUser) enterApp(session.user);
-});
+
+  if(!window.supabase?.createClient){
+    message('Le service de connexion ne s’est pas chargé. Vérifie ta connexion internet.',true);
+    return;
+  }
+
+  supabase=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+
+  let recoveryMode=false;
+
+  function showRecoveryForm(){
+    let panel=document.getElementById('password-recovery');
+    if(!panel){
+      panel=document.createElement('div');
+      panel.id='password-recovery';
+      panel.style.cssText='position:fixed;inset:0;z-index:99999;background:white;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;text-align:center;gap:12px;';
+      panel.innerHTML=`
+        <h2>Nouveau mot de passe</h2>
+        <p>Choisis ton nouveau mot de passe.</p>
+        <form id="new-password-form" style="display:flex;flex-direction:column;gap:12px;width:min(100%,350px)">
+          <input id="new-password" type="password" placeholder="Nouveau mot de passe" minlength="6" required>
+          <input id="confirm-password" type="password" placeholder="Confirmer le mot de passe" minlength="6" required>
+          <button type="button" id="toggle-password">👁 Afficher les mots de passe</button>
+          <button type="submit">Enregistrer mon mot de passe</button>
+          <p id="password-message"></p>
+        </form>`;
+      document.body.appendChild(panel);
+
+      document.getElementById('toggle-password').onclick=()=>{
+        const a=document.getElementById('new-password');
+        const b=document.getElementById('confirm-password');
+        const visible=a.type==='password';
+        a.type=visible?'text':'password';
+        b.type=visible?'text':'password';
+        document.getElementById('toggle-password').textContent=visible?'Masquer les mots de passe':'👁 Afficher les mots de passe';
+      };
+
+      document.getElementById('new-password-form').onsubmit=async e=>{
+        e.preventDefault();
+        const password=document.getElementById('new-password').value;
+        const confirmation=document.getElementById('confirm-password').value;
+        const msg=document.getElementById('password-message');
+
+        if(password.length<6){
+          msg.textContent='6 caractères minimum.';
+          return;
+        }
+        if(password!==confirmation){
+          msg.textContent='Les deux mots de passe ne correspondent pas.';
+          return;
+        }
+
+        const {error}=await supabase.auth.updateUser({password});
+        if(error){
+          msg.textContent='Erreur : '+error.message;
+          return;
+        }
+
+        msg.textContent='Mot de passe modifié !';
+        await supabase.auth.signOut();
+        currentUser=null;
+        recoveryMode=false;
+        panel.remove();
+        setMode('login');
+        show('auth');
+      };
+    }
+    panel.style.display='flex';
+    show('auth');
+  }
+
+  supabase.auth.onAuthStateChange((event,session)=>{
+    if(event==='PASSWORD_RECOVERY'){
+      recoveryMode=true;
+      currentUser=session?.user||null;
+      showRecoveryForm();
+      return;
+    }
+    if(session&&!currentUser&&!recoveryMode){
+      enterApp(session.user);
+    }
+  });
+
+  const {data:{session}}=await supabase.auth.getSession();
+
+  if(!recoveryMode){
+    if(session) await enterApp(session.user);
+    else show('auth');
+  }
+})();
         })();
